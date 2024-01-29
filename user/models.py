@@ -13,7 +13,6 @@ class User(AbstractUser):
     is_admin = models.BooleanField(default=False, verbose_name='Admin')
     contact = models.CharField(max_length = 250, null = True, blank = True)
     no_of_wins = models.IntegerField(blank = True, null = True)
-    rating = models.IntegerField(blank = True, null = True)
     no_of_followup = models.IntegerField(blank = True, null = True)
     
     profile_picture = models.ImageField(
