@@ -120,6 +120,23 @@ class PropertyCountView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class ProspectCountView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    def get(self, request, *args, **kwargs):
+        try:
+            # Get the count of properties
+            count = Prospect.objects.count()
+
+            # Serialize the count
+            serializer = ProspectCountSerializer({'count': count})
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class ProspectListView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)

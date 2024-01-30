@@ -39,6 +39,29 @@ class FollowUpReport(models.Model):
 class ReportFeedBack(models.Model):
     report = models.ForeignKey(FollowUpReport, on_delete = models.CASCADE)
 
+STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('closed_won', 'Closed Won'),
+        ('closed_lost', 'Closed Lost'),
+        ('in_progress', 'In Progress'),
+        ('under_review', 'Under Review'),
+        ('pending_approval', 'Pending Approval'),
+        ('awaiting_feedback', 'Awaiting Feedback'),
+        ('contact_attempted', 'Contact Attempted'),
+        ('contract_sent', 'Contract Sent'),
+        ('negotiation', 'Negotiation'),
+        ('contract_signed', 'Contract Signed'),
+        ('pending_payment', 'Pending Payment'),
+        ('completed', 'Completed'),
+        ('archived', 'Archived'),
+        ('cancelled', 'Cancelled'),
+        ('on_hold', 'On Hold'),
+        ('pending_verification', 'Pending Verification'),
+        ('scheduled_for_visit', 'Scheduled for Visit'),
+        ('follow_up_needed', 'Follow-up Needed'),
+        ('other', 'Other'),
+        # Add more choices as needed
+    ]  
 
 class Prospect(models.Model):
     prefix = models.CharField(max_length = 250)
@@ -47,7 +70,13 @@ class Prospect(models.Model):
     email = models.EmailField(max_length = 250)
     phone_number = models.BigIntegerField()
     whatsapp = models.BigIntegerField()
-    status = models.CharField(max_length = 250, blank = True, null = True)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='open',  # Set a default value if needed
+        blank=True,
+        null=True,
+    )
     property = models.ForeignKey(Property, related_name = 'Property', on_delete = models.CASCADE)
     follow_up_marketer = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = True)
     

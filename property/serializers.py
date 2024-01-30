@@ -28,6 +28,9 @@ class PropertyMarketerSerializer(serializers.ModelSerializer):
 class PropertyCountSerializer(serializers.Serializer):
     count = serializers.IntegerField()
 
+class ProspectCountSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+
 class ProspectSerializer(serializers.ModelSerializer):
     property = PropertySerializer()
 

@@ -15,6 +15,7 @@ urlpatterns = [
     path('create_property/', CreatePropertyView.as_view(), name='create_property'),
     path('create_prospect/', CreateProspectView.as_view(), name='create_property'),
     path('property/count/', PropertyCountView.as_view(), name='property_count'),
+    path('prospect/count/', ProspectCountView.as_view(), name='prospect_count'),
     path('prospects/', ProspectListView.as_view(), name='prospect-list'),
 
     # Add other URLs as needed
