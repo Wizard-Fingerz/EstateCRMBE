@@ -7,6 +7,9 @@ FOLLOW_UP_MEANS = (
     ('WhatsApp', 'whatsApp'),
     ('Phone Call', 'phone call'),
     ('Email', 'email'),
+    ('Physical Visitation', 'physical visitation'),
+    ('Chat', 'chat'),
+    ('Others', 'others'),
 )
 
 class Property(models.Model):
@@ -29,18 +32,28 @@ class FollowUpReport(models.Model):
     followup_means = models.CharField(max_length = 250, choices=FOLLOW_UP_MEANS, blank=True, null=True)
     other_means = models.CharField(max_length = 250)
     description = models.TextField()
+    additional_comment = models.TextField()
     media = models.FileField(upload_to="report_media")
     remark = models.CharField(max_length = 250)
+    customer_feedback = models.CharField(max_length = 250)
     action_plan = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     date = models.DateTimeField()
+    hour_spent = models.TimeField()
+    followup_time = models.TimeField()
 
 
 class ReportFeedBack(models.Model):
     report = models.ForeignKey(FollowUpReport, on_delete = models.CASCADE)
 
 STATUS_CHOICES = [
+        ('propect', 'Propect'),
         ('open', 'Open'),
+        ('working', 'Working'),
+        ('meeting_set', 'Meeting Set'),
+        ('opportunity', 'Opportunity'),
+        ('opportunity_lost', 'Opportunity Lost'),
+        ('customer', 'Customer'),
         ('closed_won', 'Closed Won'),
         ('closed_lost', 'Closed Lost'),
         ('in_progress', 'In Progress'),
@@ -61,42 +74,53 @@ STATUS_CHOICES = [
         ('follow_up_needed', 'Follow-up Needed'),
         ('other', 'Other'),
         # Add more choices as needed
-    ]  
+    ]
+
+AREA_OF_INTEREST = [
+    ('Land','LAND'),
+    ('Housing','HOUSING'),
+    ('membership','MEMBERSHIP'),
+    ('partnership','PARTNERSHIP'),
+    ('others','OTHERS'),
+]
 
 class Prospect(models.Model):
     prefix = models.CharField(max_length = 250)
     full_name = models.CharField(max_length = 250)
-    address = models.CharField(max_length = 250)
+    address = models.ForeignKey('ProspectLocation', on_delete = models.CASCADE)
     email = models.EmailField(max_length = 250)
     phone_number = models.BigIntegerField()
+    phone_number2 = models.BigIntegerField(blank =True, null = True)
     whatsapp = models.BigIntegerField()
+    social_media_handle = models.ForeignKey('PropectSocialHandle', on_delete = models.CASCADE)
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='open',  # Set a default value if needed
+        default='propect',  # Set a default value if needed
         blank=True,
         null=True,
     )
     property = models.ForeignKey(Property, related_name = 'Property', on_delete = models.CASCADE)
     follow_up_marketer = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = True)
+    contact_source = models.ForeignKey('PropectContactSource', on_delete = models.CASCADE)
+    area_of_interest = models.CharField(
+        max_length=20,
+        choices=AREA_OF_INTEREST,
+        blank=True,
+        null=True,
+    )
+    other_info = models.CharField(max_length = 250)
+    planned_commitment_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
-PAYMENT_STATUS = [
-    ('completed', 'COMPLETED'),
-    ('incompleted', 'INCOMPLETED'),
-]    
-
-class Customer(models.Model):
-    prefix = models.CharField(max_length = 250)
-    full_name = models.CharField(max_length = 250)
-    address = models.CharField(max_length = 250)
-    email = models.EmailField(max_length = 250)
-    phone_number = models.BigIntegerField()
-    whatsapp = models.BigIntegerField()
-    receipt = models.FileField(upload_to = 'customers_receipt/')
-    other_files = models.FileField(upload_to = 'other_customers_files/')
-    amount = models.BigIntegerField()
-    payment_status = models.CharField(max_length = 250, choices = PAYMENT_STATUS)
-    follow_up_description = models.TextField()
-    property = models.ForeignKey(Property, related_name = 'Customer_Property', on_delete = models.CASCADE)
-    follow_up_marketer = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = True)
+class ProspectLocation(models.Model):
+    city = models.CharField(max_length = 250)
+    state = models.CharField(max_length = 250)
     
+class PropectSocialHandle(models.Model):
+    name = models.CharField(max_length = 250)
+    username = models.CharField(max_length =250)
+
+class PropectContactSource(models.Model):
+    name = models.CharField(max_length = 250)
+    description = models.CharField(max_length =250)
