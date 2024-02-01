@@ -18,6 +18,7 @@ urlpatterns = [
     path('login/', CustomAuthToken.as_view(), name='login'),
     path('check-password-change/', PasswordChangeCheckView.as_view(), name='check_password_change'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('delete-marketers/<int:pk>/', MarketerDetailView.as_view(), name='property-detail'),
     path('marketer/count/', MarketerCountView.as_view(), name='property_count'),
 
 ]

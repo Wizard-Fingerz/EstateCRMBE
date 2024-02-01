@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from .serializers import *
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.authentication import TokenAuthentication
 from .models import User
 from rest_framework import generics, filters, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 from .models import *
 from rest_framework import status
 from rest_framework.response import Response
@@ -151,3 +153,10 @@ class MarketerCountView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class MarketerDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = MarketerSerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]

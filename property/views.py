@@ -156,3 +156,5 @@ class PropertyDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
+
+

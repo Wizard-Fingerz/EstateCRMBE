@@ -102,6 +102,26 @@ class Prospect(models.Model):
     )
     property = models.ForeignKey(Property, related_name = 'Property', on_delete = models.CASCADE)
     follow_up_marketer = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = True)
+
+PAYMENT_STATUS = [
+    ('completed', 'COMPLETED'),
+    ('incompleted', 'INCOMPLETED'),
+]    
+
+class Customer(models.Model):
+    prefix = models.CharField(max_length = 250)
+    full_name = models.CharField(max_length = 250)
+    address = models.CharField(max_length = 250)
+    email = models.EmailField(max_length = 250)
+    phone_number = models.BigIntegerField()
+    whatsapp = models.BigIntegerField()
+    receipt = models.FileField(upload_to = 'customers_receipt/')
+    other_files = models.FileField(upload_to = 'other_customers_files/')
+    amount = models.BigIntegerField()
+    payment_status = models.CharField(max_length = 250, choices = PAYMENT_STATUS)
+    follow_up_description = models.TextField()
+    property = models.ForeignKey(Property, related_name = 'Customer_Property', on_delete = models.CASCADE)
+    follow_up_marketer = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = True)
     contact_source = models.ForeignKey('PropectContactSource', on_delete = models.CASCADE)
     area_of_interest = models.CharField(
         max_length=20,
