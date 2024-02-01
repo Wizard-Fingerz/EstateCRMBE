@@ -30,6 +30,8 @@ class PropertyCountSerializer(serializers.Serializer):
 
 class ProspectCountSerializer(serializers.Serializer):
     count = serializers.IntegerField()
+    closed_won = serializers.IntegerField()
+    closed_lost = serializers.IntegerField()
 
 class ProspectSerializer(serializers.ModelSerializer):
     property = PropertySerializer()

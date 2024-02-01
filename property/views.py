@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
-
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework import generics, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -123,13 +123,21 @@ class PropertyCountView(APIView):
 class ProspectCountView(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
+
     def get(self, request, *args, **kwargs):
         try:
             # Get the count of properties
             count = Prospect.objects.count()
+            closed_won_count = Prospect.objects.filter(status='closed_won').count()
+            closed_lost_count = Prospect.objects.filter(status='closed_lost').count()
 
             # Serialize the count
-            serializer = ProspectCountSerializer({'count': count})
+            data = {
+                'count': count,
+                'closed_won': closed_won_count,
+                'closed_lost': closed_lost_count
+            }
+            serializer = ProspectCountSerializer(data)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -142,3 +150,9 @@ class ProspectListView(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
     queryset = Prospect.objects.all()
     serializer_class = ProspectSerializer
+
+class PropertyDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]

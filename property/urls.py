@@ -17,6 +17,8 @@ urlpatterns = [
     path('property/count/', PropertyCountView.as_view(), name='property_count'),
     path('prospect/count/', ProspectCountView.as_view(), name='prospect_count'),
     path('prospects/', ProspectListView.as_view(), name='prospect-list'),
+    path('ddelete-properties/<int:pk>/', PropertyDetailView.as_view(), name='property-detail'),
+
 
     # Add other URLs as needed
 ]
