@@ -20,6 +20,8 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('delete-marketers/<int:pk>/', MarketerDetailView.as_view(), name='property-detail'),
     path('marketer/count/', MarketerCountView.as_view(), name='property_count'),
+    path('get-marketer-details/<int:marketer_id>/', GetMarketerDetails.as_view(), name='get_marketer_details'),
+
 
 ]
 

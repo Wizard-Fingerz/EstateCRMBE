@@ -32,7 +32,7 @@ class MarketerSerializer(serializers.ModelSerializer):
 class AccountantSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'is_accountant', 'profile_image']
+        fields = ['first_name', 'last_name', 'email', 'is_accountant', 'profile_picture']
 
 
 class LoginSerializer(serializers.Serializer):
