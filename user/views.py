@@ -37,17 +37,18 @@ class CreateMarketerView(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def post(self, request, *args, **kwargs):
-        data = request.data.copy()
-        data['is_marketer'] = True  # Set the user as a marketer
-        data['password'] = 'Password'  # Set the default password
+        request.data['is_marketer'] = True  # Set the user as a marketer
+        request.data['password'] = 'Password'  # Set the default password
 
-        serializer = MarketerSerializer(data=data)
+        print(request.data)
+
+        serializer = MarketerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# views.py
+        else:
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateAccountantView(APIView):

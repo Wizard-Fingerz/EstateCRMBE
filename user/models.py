@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.core.validators import RegexValidator
 
 
 # Create your models here.
@@ -20,6 +21,12 @@ class User(AbstractUser):
     
     cover_picture = models.ImageField(
         upload_to='cover_pics', blank=True, null=True)
+    
+    username_validator = RegexValidator(
+        regex=r'^[\w.@+-/]+$',
+        message="Enter a valid username. This value may contain only letters, numbers, and @/./+/-/_ characters.",
+        code='invalid_username'
+    )
 
     class Meta:
         swappable = 'AUTH_USER_MODEL'

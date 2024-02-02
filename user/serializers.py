@@ -9,9 +9,24 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class MarketerSerializer(serializers.ModelSerializer):
+    is_marketer = serializers.BooleanField(required=True, write_only=True)
+    username = serializers.CharField(validators=[RegexValidator(
+        regex=r'^[\w.@+-/]+$',
+        message="Enter a valid username. This value may contain only letters, numbers, and @/./+/-/_ characters.",
+        code='invalid_username'
+    )])
+
     class Meta:
         model = User
-        fields = ['first_name', 'last_name','username', 'email', 'contact', 'is_marketer', 'profile_picture', 'cover_picture']
+        fields = ['first_name', 'last_name', 'username', 'email', 'contact', 'is_marketer', 'profile_picture', 'cover_picture', 'password']
+
+    def create(self, validated_data):
+        is_marketer = validated_data.pop('is_marketer', False)
+        user = super(MarketerSerializer, self).create(validated_data)
+        user.is_marketer = is_marketer
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 
 class AccountantSerializer(serializers.ModelSerializer):
