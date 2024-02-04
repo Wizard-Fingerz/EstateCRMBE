@@ -93,6 +93,9 @@ class Prospect(models.Model):
     phone_number2 = models.BigIntegerField(blank =True, null = True)
     whatsapp = models.BigIntegerField()
     social_media_handle = models.ForeignKey('PropectSocialHandle', on_delete = models.CASCADE)
+    facebook_username = models.CharField(max_length = 250, null = True, blank = True)
+    twitter_username = models.CharField(max_length = 250, null = True, blank = True)
+    instagram_username = models.CharField(max_length = 250, null = True, blank = True)
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -100,6 +103,7 @@ class Prospect(models.Model):
         blank=True,
         null=True,
     )
+    contact_source = models.CharField(max_length = 250, null = True, blank = True)
     property = models.ForeignKey(Property, related_name = 'Property', on_delete = models.CASCADE)
     follow_up_marketer = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = True)
 

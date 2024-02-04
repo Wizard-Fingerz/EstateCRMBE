@@ -15,11 +15,14 @@ from .models import *
 from .serializers import *
 
 # @method_decorator(csrf_exempt, name='dispatch')
+
+
 class CreatePropertyView(APIView):
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication,)  # Use the appropriate authentication class
-    
+    # Use the appropriate authentication class
+    authentication_classes = (TokenAuthentication,)
+
     def post(self, request, *args, **kwargs):
         property_name = request.data.get('property_name')
         property_address = request.data.get('property_address')
@@ -61,9 +64,11 @@ class PropertyViewSet(viewsets.ReadOnlyModelViewSet):
 
 class PropertyMarketerViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication,)  # Use the appropriate authentication class
+    # Use the appropriate authentication class
+    authentication_classes = (TokenAuthentication,)
     queryset = User.objects.filter(is_marketer=True)
     serializer_class = PropertyMarketerSerializer
+
 
 class CreateProspectView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -74,8 +79,12 @@ class CreateProspectView(APIView):
         full_name = request.data.get('prospect_name')
         address = request.data.get('prospect_address')
         email = request.data.get('prospect_email')
-        phone_number = request.data.get('prospect_phone_number')
+        phone_number = request.data.get('prospect_phone_number1')
+        phone_number2 = request.data.get('prospect_phone_number2')
         whatsapp = request.data.get('prospect_whatsapp_phone_number')
+        facebook_username = request.data.get('facebook_username')
+        twitter_username = request.data.get('twitter_username')
+        instagram_username = request.data.get('instagram_username')
         property_id = request.data.get('property')
         marketer_id = request.data.get('marketer')
 
@@ -84,11 +93,10 @@ class CreateProspectView(APIView):
         else:
             marketer_instance = get_object_or_404(User, id=marketer_id)
 
-
         if property_id == '':
             property_instance = None
         else:
-        # Fetch the corresponding Property and Marketer instances
+            # Fetch the corresponding Property and Marketer instances
             property_instance = get_object_or_404(Property, id=property_id)
 
         prospect_obj = Prospect.objects.create(
@@ -97,16 +105,22 @@ class CreateProspectView(APIView):
             address=address,
             email=email,
             phone_number=phone_number,
+            phone_number2=phone_number2,
             whatsapp=whatsapp,
+            facebook_username=facebook_username,
+            twitter_username=twitter_username,
+            instagram_username=instagram_username,
             property=property_instance,
             follow_up_marketer=marketer_instance,
         )
 
         return Response({'message': 'Prospect created successfully'}, status=status.HTTP_201_CREATED)
-    
+
+
 class PropertyCountView(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
+
     def get(self, request, *args, **kwargs):
         try:
             # Get the count of properties
@@ -120,6 +134,7 @@ class PropertyCountView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class ProspectCountView(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
@@ -128,8 +143,10 @@ class ProspectCountView(APIView):
         try:
             # Get the count of properties
             count = Prospect.objects.count()
-            closed_won_count = Prospect.objects.filter(status='closed_won').count()
-            closed_lost_count = Prospect.objects.filter(status='closed_lost').count()
+            closed_won_count = Prospect.objects.filter(
+                status='closed_won').count()
+            closed_lost_count = Prospect.objects.filter(
+                status='closed_lost').count()
 
             # Serialize the count
             data = {
@@ -151,10 +168,9 @@ class ProspectListView(generics.ListAPIView):
     queryset = Prospect.objects.all()
     serializer_class = ProspectSerializer
 
+
 class PropertyDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
-
-
