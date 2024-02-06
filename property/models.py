@@ -87,12 +87,12 @@ AREA_OF_INTEREST = [
 class Prospect(models.Model):
     prefix = models.CharField(max_length = 250)
     full_name = models.CharField(max_length = 250)
-    address = models.ForeignKey('ProspectLocation', on_delete = models.CASCADE)
+    # address = models.ForeignKey('ProspectLocation', on_delete = models.CASCADE)
+    address = models.CharField(max_length = 400)
     email = models.EmailField(max_length = 250)
     phone_number = models.BigIntegerField()
     phone_number2 = models.BigIntegerField(blank =True, null = True)
     whatsapp = models.BigIntegerField()
-    social_media_handle = models.ForeignKey('PropectSocialHandle', on_delete = models.CASCADE)
     facebook_username = models.CharField(max_length = 250, null = True, blank = True)
     twitter_username = models.CharField(max_length = 250, null = True, blank = True)
     instagram_username = models.CharField(max_length = 250, null = True, blank = True)
@@ -106,6 +106,16 @@ class Prospect(models.Model):
     contact_source = models.CharField(max_length = 250, null = True, blank = True)
     property = models.ForeignKey(Property, related_name = 'Property', on_delete = models.CASCADE)
     follow_up_marketer = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = True)
+    area_of_interest = models.CharField(
+        max_length=20,
+        choices=AREA_OF_INTEREST,
+        blank=True,
+        null=True,
+    )
+    other_info = models.CharField(max_length = 250)
+    planned_commitment_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 PAYMENT_STATUS = [
     ('completed', 'COMPLETED'),
@@ -115,10 +125,15 @@ PAYMENT_STATUS = [
 class Customer(models.Model):
     prefix = models.CharField(max_length = 250)
     full_name = models.CharField(max_length = 250)
-    address = models.CharField(max_length = 250)
+    # address = models.ForeignKey('ProspectLocation', on_delete = models.CASCADE)
+    address = models.CharField(max_length = 400)
     email = models.EmailField(max_length = 250)
     phone_number = models.BigIntegerField()
+    phone_number2 = models.BigIntegerField(blank =True, null = True)
     whatsapp = models.BigIntegerField()
+    facebook_username = models.CharField(max_length = 250, null = True, blank = True)
+    twitter_username = models.CharField(max_length = 250, null = True, blank = True)
+    instagram_username = models.CharField(max_length = 250, null = True, blank = True)
     receipt = models.FileField(upload_to = 'customers_receipt/')
     other_files = models.FileField(upload_to = 'other_customers_files/')
     amount = models.BigIntegerField()

@@ -16,10 +16,10 @@ class User(AbstractUser):
     no_of_wins = models.IntegerField(blank = True, null = True)
     no_of_followup = models.IntegerField(blank = True, null = True)
     
-    profile_picture = models.ImageField(
+    profile_picture = models.FileField(
         upload_to='profile_pics', blank=True, null=True)
     
-    cover_picture = models.ImageField(
+    cover_picture = models.FileField(
         upload_to='cover_pics', blank=True, null=True)
     
     username_validator = RegexValidator(

@@ -33,9 +33,21 @@ class ProspectCountSerializer(serializers.Serializer):
     closed_won = serializers.IntegerField()
     closed_lost = serializers.IntegerField()
 
+class CustomerCountSerializer(serializers.Serializer):
+    count = serializers.IntegerField()
+
+
 class ProspectSerializer(serializers.ModelSerializer):
     property = PropertySerializer()
 
     class Meta:
         model = Prospect
+        fields = '__all__'
+
+
+class CustomerSerializer(serializers.ModelSerializer):
+    property = PropertySerializer()
+
+    class Meta:
+        model = Customer
         fields = '__all__'
