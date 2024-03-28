@@ -51,3 +51,9 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = '__all__'
+
+
+class ProspectAllocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prospect
+        fields = ['id', 'follow_up_marketer']

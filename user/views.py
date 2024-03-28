@@ -172,3 +172,11 @@ class GetMarketerDetails(APIView):
         serializer = UserSerializer(marketer)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserDetailsView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        # Retrieve the currently authenticated user
+        return self.request.user

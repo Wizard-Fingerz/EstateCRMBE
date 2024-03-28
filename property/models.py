@@ -72,7 +72,7 @@ STATUS_CHOICES = [
         ('pending_verification', 'Pending Verification'),
         ('scheduled_for_visit', 'Scheduled for Visit'),
         ('follow_up_needed', 'Follow-up Needed'),
-        ('other', 'Other'),
+        ('others', 'Others'),
         # Add more choices as needed
     ]
 
@@ -115,6 +115,9 @@ class Prospect(models.Model):
     other_info = models.CharField(max_length = 250)
     planned_commitment_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return str(self.full_name) or ''
 
 
 PAYMENT_STATUS = [
@@ -123,38 +126,23 @@ PAYMENT_STATUS = [
 ]    
 
 class Customer(models.Model):
-    prefix = models.CharField(max_length = 250)
-    full_name = models.CharField(max_length = 250)
-    # address = models.ForeignKey('ProspectLocation', on_delete = models.CASCADE)
-    address = models.CharField(max_length = 400)
-    email = models.EmailField(max_length = 250)
-    phone_number = models.BigIntegerField()
-    phone_number2 = models.BigIntegerField(blank =True, null = True)
-    whatsapp = models.BigIntegerField()
-    facebook_username = models.CharField(max_length = 250, null = True, blank = True)
-    twitter_username = models.CharField(max_length = 250, null = True, blank = True)
-    instagram_username = models.CharField(max_length = 250, null = True, blank = True)
+    prospect = models.ForeignKey(Prospect, on_delete = models.CASCADE)
     receipt = models.FileField(upload_to = 'customers_receipt/')
     other_files = models.FileField(upload_to = 'other_customers_files/')
     amount = models.BigIntegerField()
     payment_status = models.CharField(max_length = 250, choices = PAYMENT_STATUS)
     follow_up_description = models.TextField()
-    property = models.ForeignKey(Property, related_name = 'Customer_Property', on_delete = models.CASCADE)
-    follow_up_marketer = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = True)
-    contact_source = models.ForeignKey('PropectContactSource', on_delete = models.CASCADE)
-    area_of_interest = models.CharField(
-        max_length=20,
-        choices=AREA_OF_INTEREST,
-        blank=True,
-        null=True,
-    )
-    other_info = models.CharField(max_length = 250)
-    planned_commitment_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    
+    def __str__(self):
+        return str(self.prospect) or ''
 
 class ProspectLocation(models.Model):
     city = models.CharField(max_length = 250)
     state = models.CharField(max_length = 250)
+    
+    
     
 class PropectSocialHandle(models.Model):
     name = models.CharField(max_length = 250)

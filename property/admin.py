@@ -12,11 +12,8 @@ class PropertyAdmin(ImportExportModelAdmin):
 
 @admin.register(Customer)
 class CustomerAdmin(ImportExportModelAdmin):
-    list_display = ('full_name', 'address', 'email',
-                    'phone_number', 'whatsapp', )
-    search_fields = ['full_name', 'address',
-                     'email', 'phone_number', 'whatsapp', ]
-
+    list_display = ('prospect', )
+    
 
 @admin.register(Prospect)
 class ProspectAdmin(ImportExportModelAdmin):

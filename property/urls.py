@@ -20,6 +20,7 @@ urlpatterns = [
     path('prospects/', ProspectListView.as_view(), name='prospect-list'),
     path('customers/', CustomerListView.as_view(), name='customer-list'),
     path('delete-properties/<int:pk>/', PropertyDetailView.as_view(), name='property-detail'),
+    path('prospects/<int:pk>/allocate/', ProspectAllocationView.as_view(), name='prospect-allocate'),
 
 
     # Add other URLs as needed

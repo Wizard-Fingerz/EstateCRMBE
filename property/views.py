@@ -82,9 +82,13 @@ class CreateProspectView(APIView):
         phone_number = request.data.get('prospect_phone_number1')
         phone_number2 = request.data.get('prospect_phone_number2')
         whatsapp = request.data.get('prospect_whatsapp_phone_number')
-        facebook_username = request.data.get('facebook_username')
-        twitter_username = request.data.get('twitter_username')
-        instagram_username = request.data.get('instagram_username')
+        facebook_username = request.data.get('prospect_facebook_username')
+        twitter_username = request.data.get('prospect_twitter_username')
+        instagram_username = request.data.get('prospect_instagram_username')
+        prospect_contact_source = request.data.get('prospect_contact_source')
+        prospect_other_info = request.data.get('prospect_other_info')
+        planned_commitment_date = request.data.get('planned_commitment_date')
+        area_of_interest = request.data.get('area_of_interest')
         property_id = request.data.get('property')
         marketer_id = request.data.get('marketer')
 
@@ -110,6 +114,10 @@ class CreateProspectView(APIView):
             facebook_username=facebook_username,
             twitter_username=twitter_username,
             instagram_username=instagram_username,
+            contact_source=prospect_contact_source,
+            other_info=prospect_other_info,
+            planned_commitment_date=planned_commitment_date,
+            area_of_interest=area_of_interest,
             property=property_instance,
             follow_up_marketer=marketer_instance,
         )
@@ -203,3 +211,13 @@ class PropertyDetailView(RetrieveUpdateDestroyAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
 
+class ProspectAllocationView(generics.UpdateAPIView):
+    queryset = Prospect.objects.all()
+    serializer_class = ProspectAllocationSerializer
+
+    def put(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
