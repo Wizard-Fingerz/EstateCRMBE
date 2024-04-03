@@ -225,13 +225,17 @@ class ProspectAllocationView(generics.UpdateAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class SendEmailView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
     def post(self, request, prospect_id):
+        print(request.data)
         try:
             prospect = Prospect.objects.get(pk=prospect_id)
         except Prospect.DoesNotExist:
             return Response({'error': 'Prospect not found'}, status=status.HTTP_404_NOT_FOUND)
-
+        print(request.data)
         serializer = EmailSerializer(data=request.data)
+        print(serializer)
         if serializer.is_valid():
             subject = serializer.validated_data['subject']
             message = serializer.validated_data['message']
@@ -241,7 +245,7 @@ class SendEmailView(APIView):
             email_message = EmailMessage(
                 subject,
                 message,
-                'your_email@example.com',  # Replace with your email
+                'adewale.oladiti28@gmail.com',  # Replace with your email
                 [email],
             )
 
@@ -253,3 +257,30 @@ class SendEmailView(APIView):
             return Response({'success': 'Email sent successfully'})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BulkEmailView(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    def post(self, request):
+        # Extract email content from request data
+        subject = request.data.get('subject')
+        message = request.data.get('message')
+        media = request.data.get('media')
+
+        if not subject or not message:
+            return Response({'error': 'Subject and message are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get all prospects
+        prospects = Prospect.objects.all()
+
+        # Send email to each prospect
+        for prospect in prospects:
+            email = EmailMessage(subject, message, 'your@email.com', [prospect.email])
+
+            if media:
+                email.attach(media.name, media.read(), media.content_type)
+
+            email.send(fail_silently=False)
+
+        return Response({'success': 'Bulk email sent successfully'}, status=status.HTTP_200_OK)

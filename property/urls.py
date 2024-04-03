@@ -22,6 +22,7 @@ urlpatterns = [
     path('delete-properties/<int:pk>/', PropertyDetailView.as_view(), name='property-detail'),
     path('prospects/<int:pk>/allocate/', ProspectAllocationView.as_view(), name='prospect-allocate'),
     path('prospects/<int:prospect_id>/send-email/', SendEmailView.as_view(), name='send-email'),
+    path('prospects/send-bulk-email/', BulkEmailView.as_view(), name='send-bulk-email'),
 
 
 
