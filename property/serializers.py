@@ -39,6 +39,7 @@ class CustomerCountSerializer(serializers.Serializer):
 
 class ProspectSerializer(serializers.ModelSerializer):
     property = PropertySerializer()
+    follow_up_marketer = PropertyMarketerSerializer()
 
     class Meta:
         model = Prospect
@@ -62,3 +63,15 @@ class EmailSerializer(serializers.Serializer):
     subject = serializers.CharField(max_length=200)
     message = serializers.CharField()
     media = serializers.FileField()
+
+
+class CustomerConversionSerializer(serializers.Serializer):
+    prospect_id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+    receipt = serializers.FileField()
+    other_files = serializers.FileField()
+    payment_status = serializers.ChoiceField(choices=['completed', 'incompleted'])
+    follow_up_description = serializers.CharField()
+
+    def create(self, validated_data):
+        return Customer.objects.create(**validated_data)

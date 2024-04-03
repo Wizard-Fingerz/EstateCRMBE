@@ -284,3 +284,21 @@ class BulkEmailView(APIView):
             email.send(fail_silently=False)
 
         return Response({'success': 'Bulk email sent successfully'}, status=status.HTTP_200_OK)
+
+class ConvertProspectToCustomer(APIView):
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+    def post(self, request):
+        print(request.data)
+        serializer = CustomerConversionSerializer(data=request.data)
+        if serializer.is_valid():
+            prospect_id = serializer.validated_data['prospect_id']
+            try:
+                prospect = Prospect.objects.get(pk=prospect_id)
+            except Prospect.DoesNotExist:
+                return Response({'error': 'Prospect not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+            # Create a customer
+            customer = serializer.save(prospect=prospect)
+            return Response({'success': 'Prospect converted to customer', 'customer_id': customer.id}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
