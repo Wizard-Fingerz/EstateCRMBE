@@ -288,6 +288,8 @@ class BulkEmailView(APIView):
 class ConvertProspectToCustomer(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
+    parser_classes = (MultiPartParser, FormParser)
+    
     def post(self, request):
         print(request.data)
         serializer = CustomerConversionSerializer(data=request.data)
