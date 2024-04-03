@@ -57,3 +57,8 @@ class ProspectAllocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prospect
         fields = ['id', 'follow_up_marketer']
+
+class EmailSerializer(serializers.Serializer):
+    subject = serializers.CharField(max_length=200)
+    message = serializers.CharField()
+    media = serializers.FileField()

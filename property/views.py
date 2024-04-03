@@ -13,6 +13,8 @@ from rest_framework import viewsets
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import *
 from .serializers import *
+from django.core.mail import EmailMessage
+from django.core.mail import send_mail
 
 # @method_decorator(csrf_exempt, name='dispatch')
 
@@ -221,3 +223,33 @@ class ProspectAllocationView(generics.UpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class SendEmailView(APIView):
+    def post(self, request, prospect_id):
+        try:
+            prospect = Prospect.objects.get(pk=prospect_id)
+        except Prospect.DoesNotExist:
+            return Response({'error': 'Prospect not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = EmailSerializer(data=request.data)
+        if serializer.is_valid():
+            subject = serializer.validated_data['subject']
+            message = serializer.validated_data['message']
+            media = serializer.validated_data.get('media')  # Retrieve media file if present
+            email = prospect.email  # Assuming email field is present in Prospect model
+
+            email_message = EmailMessage(
+                subject,
+                message,
+                'your_email@example.com',  # Replace with your email
+                [email],
+            )
+
+            if media:
+                email_message.attach(media.name, media.read(), media.content_type)
+
+            email_message.send(fail_silently=False)
+
+            return Response({'success': 'Email sent successfully'})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
