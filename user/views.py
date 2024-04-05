@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .serializers import *
+from django.db.models import Q
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.authentication import TokenAuthentication
 from .models import User
@@ -183,9 +184,14 @@ class UserDetailsView(generics.RetrieveAPIView):
 
 
 class RandomMarketerAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+    # Use the appropriate authentication class
+    authentication_classes = (TokenAuthentication,)
     def get(self, request):
         # Filter users who are marketers and have fewer than 20 follow-ups
-        marketers = User.objects.filter(is_marketer=True, no_of_followup__lt=20)
+        marketers = User.objects.filter(
+            Q(is_marketer=True) & (Q(no_of_followup__lt=20) | Q(no_of_followup__isnull=True))
+        )   
         
         # If there are marketers with fewer than 20 follow-ups
         if marketers.exists():
