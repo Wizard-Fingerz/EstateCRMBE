@@ -171,6 +171,7 @@ class ProspectCountView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class CustomerCountView(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
@@ -179,11 +180,11 @@ class CustomerCountView(APIView):
         try:
             # Get the count of properties
             count = Customer.objects.count()
-            
+
             # Serialize the count
             data = {
                 'count': count,
-                            }
+            }
             serializer = CustomerCountSerializer(data)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -198,12 +199,12 @@ class ProspectListView(generics.ListAPIView):
     queryset = Prospect.objects.all()
     serializer_class = ProspectSerializer
 
+
 class CustomerListView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-
 
 
 class PropertyDetailView(RetrieveUpdateDestroyAPIView):
@@ -224,9 +225,11 @@ class ProspectAllocationView(generics.UpdateAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class SendEmailView(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
+
     def post(self, request, prospect_id):
         print(request.data)
         try:
@@ -239,7 +242,8 @@ class SendEmailView(APIView):
         if serializer.is_valid():
             subject = serializer.validated_data['subject']
             message = serializer.validated_data['message']
-            media = serializer.validated_data.get('media')  # Retrieve media file if present
+            media = serializer.validated_data.get(
+                'media')  # Retrieve media file if present
             email = prospect.email  # Assuming email field is present in Prospect model
 
             email_message = EmailMessage(
@@ -250,7 +254,8 @@ class SendEmailView(APIView):
             )
 
             if media:
-                email_message.attach(media.name, media.read(), media.content_type)
+                email_message.attach(
+                    media.name, media.read(), media.content_type)
 
             email_message.send(fail_silently=False)
 
@@ -262,6 +267,7 @@ class SendEmailView(APIView):
 class BulkEmailView(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
+
     def post(self, request):
         # Extract email content from request data
         subject = request.data.get('subject')
@@ -276,7 +282,8 @@ class BulkEmailView(APIView):
 
         # Send email to each prospect
         for prospect in prospects:
-            email = EmailMessage(subject, message, 'your@email.com', [prospect.email])
+            email = EmailMessage(
+                subject, message, 'your@email.com', [prospect.email])
 
             if media:
                 email.attach(media.name, media.read(), media.content_type)
@@ -285,11 +292,12 @@ class BulkEmailView(APIView):
 
         return Response({'success': 'Bulk email sent successfully'}, status=status.HTTP_200_OK)
 
+
 class ConvertProspectToCustomer(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
     parser_classes = (MultiPartParser, FormParser)
-    
+
     def post(self, request):
         print(request.data)
         serializer = CustomerConversionSerializer(data=request.data)
@@ -299,7 +307,7 @@ class ConvertProspectToCustomer(APIView):
                 prospect = Prospect.objects.get(pk=prospect_id)
             except Prospect.DoesNotExist:
                 return Response({'error': 'Prospect not found'}, status=status.HTTP_404_NOT_FOUND)
-            
+
             # Create a customer
             customer = serializer.save(prospect=prospect)
             return Response({'success': 'Prospect converted to customer', 'customer_id': customer.id}, status=status.HTTP_201_CREATED)
@@ -308,14 +316,18 @@ class ConvertProspectToCustomer(APIView):
 
 class FollowUpReportCreateAPIView(generics.CreateAPIView):
     serializer_class = FollowUpReportSerializer
+    
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
 
     def post(self, request, prospect_id):
-        
+
         try:
             prospect = Prospect.objects.get(pk=prospect_id)
         except Prospect.DoesNotExist:
             return Response({'message': 'Prospect not found'}, status=status.HTTP_404_NOT_FOUND)
-
+        # Set the marketer to the authenticated user
+        request.data['marketer'] = request.user.id
         # Add the prospect instance to the request data
         request.data['prospect'] = prospect.id
 
@@ -324,3 +336,15 @@ class FollowUpReportCreateAPIView(generics.CreateAPIView):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class MarketerFollowUpReportListAPIView(generics.ListAPIView):
+    serializer_class = FollowUpReportSerializer
+    
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def get_queryset(self):
+        # Filter the FollowUpReport objects based on the marketer field
+        # associated with the authenticated user (request.user)
+        return FollowUpReport.objects.filter(marketer=self.request.user)

@@ -28,7 +28,7 @@ class Property(models.Model):
 
 class FollowUpReport(models.Model):
     prospect = models.ForeignKey('Prospect', on_delete = models.CASCADE)
-    # property = models.ForeignKey(Property, on_delete = models.CASCADE)
+    marketer = models.ForeignKey(User, on_delete = models.CASCADE)
     followup_means = models.CharField(max_length = 250, choices=FOLLOW_UP_MEANS, blank=True, null=True)
     other_means = models.CharField(max_length = 250, null = True, blank = True)
     description = models.TextField(null = True, blank = True)

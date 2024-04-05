@@ -25,6 +25,7 @@ urlpatterns = [
     path('prospects/send-bulk-email/', BulkEmailView.as_view(), name='send-bulk-email'),
     path('convert-prospect-to-customer/', ConvertProspectToCustomer.as_view(), name='convert_prospect_to_customer'),
     path('follow-up/<int:prospect_id>/', FollowUpReportCreateAPIView.as_view(), name='followup-report-create'),
+    path('follow-ups/', MarketerFollowUpReportListAPIView.as_view(), name='followup-reports'),
 
 
     # Add other URLs as needed

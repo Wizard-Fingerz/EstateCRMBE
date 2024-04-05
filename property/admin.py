@@ -22,3 +22,7 @@ class ProspectAdmin(ImportExportModelAdmin):
     search_fields = ['full_name', 'address', 'email',
                      'phone_number', 'whatsapp', 'status']
     list_filter = ('status',)
+
+@admin.register(FollowUpReport)
+class FollowUpReportAdmin(ImportExportModelAdmin):
+    list_display = ('prospect', 'marketer', 'followup_means')
