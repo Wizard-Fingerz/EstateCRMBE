@@ -180,3 +180,18 @@ class UserDetailsView(generics.RetrieveAPIView):
     def get_object(self):
         # Retrieve the currently authenticated user
         return self.request.user
+
+
+class RandomMarketerAPIView(APIView):
+    def get(self, request):
+        # Filter users who are marketers and have fewer than 20 follow-ups
+        marketers = User.objects.filter(is_marketer=True, no_of_followup__lt=20)
+        
+        # If there are marketers with fewer than 20 follow-ups
+        if marketers.exists():
+            # Get a random marketer from the filtered queryset
+            random_marketer = marketers.order_by('?').first()
+            serializer = UserSerializer(random_marketer)
+            return Response(serializer.data)
+        else:
+            return Response({'message': 'No available marketers with fewer than 20 follow-ups'}, status=404)
