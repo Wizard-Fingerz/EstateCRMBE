@@ -304,3 +304,23 @@ class ConvertProspectToCustomer(APIView):
             customer = serializer.save(prospect=prospect)
             return Response({'success': 'Prospect converted to customer', 'customer_id': customer.id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FollowUpReportCreateAPIView(generics.CreateAPIView):
+    serializer_class = FollowUpReportSerializer
+
+    def post(self, request, prospect_id):
+        
+        try:
+            prospect = Prospect.objects.get(pk=prospect_id)
+        except Prospect.DoesNotExist:
+            return Response({'message': 'Prospect not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Add the prospect instance to the request data
+        request.data['prospect'] = prospect.id
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

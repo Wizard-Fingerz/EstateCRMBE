@@ -201,3 +201,4 @@ class RandomMarketerAPIView(APIView):
             return Response(serializer.data)
         else:
             return Response({'message': 'No available marketers with fewer than 20 follow-ups'}, status=404)
+

@@ -28,19 +28,19 @@ class Property(models.Model):
 
 class FollowUpReport(models.Model):
     prospect = models.ForeignKey('Prospect', on_delete = models.CASCADE)
-    property = models.ForeignKey(Property, on_delete = models.CASCADE)
+    # property = models.ForeignKey(Property, on_delete = models.CASCADE)
     followup_means = models.CharField(max_length = 250, choices=FOLLOW_UP_MEANS, blank=True, null=True)
-    other_means = models.CharField(max_length = 250)
-    description = models.TextField()
-    additional_comment = models.TextField()
-    media = models.FileField(upload_to="report_media")
-    remark = models.CharField(max_length = 250)
-    customer_feedback = models.CharField(max_length = 250)
-    action_plan = models.TextField()
+    other_means = models.CharField(max_length = 250, null = True, blank = True)
+    description = models.TextField(null = True, blank = True)
+    additional_comment = models.TextField(null = True, blank = True)
+    media = models.FileField(upload_to="report_media", null = True, blank = True)
+    remark = models.CharField(max_length = 250, null = True, blank = True)
+    customer_feedback = models.CharField(max_length = 250, null = True, blank = True)
+    action_plan = models.TextField(null = True, blank = True)
     created_at = models.DateTimeField(auto_now_add=True)
-    date = models.DateTimeField()
-    hour_spent = models.TimeField()
-    followup_time = models.TimeField()
+    date = models.DateTimeField(null = True, blank = True)
+    hour_spent = models.TimeField(null = True, blank = True)
+    followup_time = models.TimeField(null = True, blank = True)
 
 
 class ReportFeedBack(models.Model):
